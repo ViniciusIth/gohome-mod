@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "gohome",
+  "version": "${version}",
+  "name": "Go Home",
+  "description": "",
+  "authors": [
+    "viniciusith"
+  ],
+  "contact": {
+    "repo": "https://github.com/viniciusith/gohome_mod"
+  },
+  "license": "GPL-3.0",
+  "icon": "assets/gohome/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "cloud.viniciusith.gohome.GoHomeMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": "0.15.1",
+    "fabric": "*",
+    "minecraft": "1.20.1"
+  }
+}
