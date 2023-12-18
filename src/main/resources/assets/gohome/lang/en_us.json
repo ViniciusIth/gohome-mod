@@ -1,4 +1,6 @@
 {
   "item.minecraft.potion.effect.recall_potion": "Recall Potion",
+  "item.minecraft.lingering_potion.effect.recall_potion": "Lingering Recall Potion",
+  "item.minecraft.splash_potion.effect.recall_potion": "Splash Recall Potion",
   "effect.gohome.recall": "Recall"
 }
