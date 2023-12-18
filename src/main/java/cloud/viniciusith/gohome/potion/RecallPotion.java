@@ -17,7 +17,7 @@ public class RecallPotion {
         RECALL_POTION = Registry.register(
                 Registries.POTION,
                 new Identifier("gohome", "recall_potion"),
-                new Potion(new StatusEffectInstance(RecallEffect.RECALL))
+                new Potion(new StatusEffectInstance(RecallEffect.RECALL, 1))
         );
 
         BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, Items.ENDER_PEARL, RECALL_POTION);
