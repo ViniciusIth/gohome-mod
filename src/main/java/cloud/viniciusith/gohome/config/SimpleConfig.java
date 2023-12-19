@@ -2,6 +2,7 @@ package cloud.viniciusith.gohome.config;
 
 /*
  * Copyright (c) 2021 magistermaks
+ * Modified by ViniciusIth
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +23,6 @@ package cloud.viniciusith.gohome.config;
  * THE SOFTWARE.
  */
 
-import cloud.viniciusith.gohome.GoHomeMod;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +37,7 @@ import java.util.Scanner;
 
 public class SimpleConfig {
 
-    private static final Logger LOGGER = LogManager.getLogger(GoHomeMod.MOD_ID);
+    private static final Logger LOGGER = LogManager.getLogger("SimpleConfig");
     private final HashMap<String, String> config = new HashMap<>();
     private final ConfigRequest request;
     private boolean broken = false;
@@ -127,9 +127,7 @@ public class SimpleConfig {
         if( !entry.isEmpty() && !entry.startsWith( "#" ) ) {
             String[] parts = entry.split("=", 2);
             if( parts.length == 2 ) {
-                // Recognizes comments after a value
-                String temp = parts[1].split(" #")[0];
-                config.put( parts[0], temp );
+                config.put( parts[0], parts[1] );
             }else{
                 throw new RuntimeException("Syntax error in config file on line " + line + "!");
             }
@@ -172,7 +170,7 @@ public class SimpleConfig {
      * @see     SimpleConfig#getOrDefault
      */
     @Deprecated
-    public String get( String key ) {
+    private String get( String key ) {
         return config.get( key );
     }
 
