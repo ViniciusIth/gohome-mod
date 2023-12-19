@@ -1,5 +1,6 @@
 package cloud.viniciusith.gohome;
 
+import cloud.viniciusith.gohome.config.ModConfig;
 import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
@@ -75,7 +76,7 @@ public class Utilities {
     }
 
 
-    public static void teleportPlayerTo(ServerPlayerEntity playerEntity, Vec3d targetPos, RegistryKey<World> destination) {
+    public static boolean teleportPlayerTo(ServerPlayerEntity playerEntity, Vec3d targetPos, RegistryKey<World> destination) {
         ServerWorld destinationDim = playerEntity.getServer().getWorld(destination);
 
 
@@ -83,10 +84,14 @@ public class Utilities {
         GoHomeMod.LOGGER.info(playerEntity.getServerWorld().getRegistryKey().toString());
 
         if (!destination.equals(playerEntity.getServerWorld().getRegistryKey())) {
+            if (!ModConfig.TRANS_DIM) {
+                return false;
+            }
             FabricDimensions.teleport(playerEntity, destinationDim, new TeleportTarget(targetPos, Vec3d.ZERO, 0, 0));
         }
 
         playerEntity.teleport(targetPos.getX(), targetPos.getY(), targetPos.getZ());
+        return true;
     }
 
     public static Vec3d getWorldSpawnPos(ServerPlayerEntity playerEntity) {
