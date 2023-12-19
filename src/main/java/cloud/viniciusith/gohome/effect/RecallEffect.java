@@ -1,6 +1,6 @@
 package cloud.viniciusith.gohome.effect;
 
-import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
+import cloud.viniciusith.gohome.Utilities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.InstantStatusEffect;
@@ -14,12 +14,13 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class RecallEffect extends InstantStatusEffect {
     public static StatusEffect RECALL;
@@ -35,25 +36,23 @@ public class RecallEffect extends InstantStatusEffect {
         }
     }
 
-    void teleportToSpawn(ServerPlayerEntity player) {
-        BlockPos spawn = player.getSpawnPointPosition();
-        if (spawn == null) {
-            spawn = player.getWorld().getSpawnPos();
+    void teleportToSpawn(ServerPlayerEntity playerEntity) {
+        Optional<Vec3d> spawn = Utilities.getPlayerSpawn(playerEntity);
+        RegistryKey<World> spawnDimension = playerEntity.getSpawnPointDimension();
+
+        playerEntity.stopRiding();
+        playerEntity.fallDistance = 0;
+
+        if (spawn.isEmpty()) {
+            Vec3d worldSpawn = Utilities.getWorldSpawnPos(playerEntity);
+            Utilities.teleportPlayerTo(playerEntity, worldSpawn, ServerWorld.OVERWORLD);
+            playerEntity.getWorld().playSound(null, worldSpawn.getX(), worldSpawn.getY(), worldSpawn.getZ(), SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, SoundCategory.PLAYERS, 1f, 1f);
+            playerEntity.sendMessage(Text.translatable("block.minecraft.spawn.not_valid"));
+            return;
         }
 
-        RegistryKey<World> spawnDimension = player.getSpawnPointDimension();
-        ServerWorld destination = ((ServerWorld) player.getWorld()).getServer().getWorld(spawnDimension);
-
-
-        if (!spawnDimension.equals(player.getServerWorld().getRegistryKey())) {
-            Vec3d spawn3d = new Vec3d(spawn.getX() + 0.5f, spawn.getY() + 0.5f, spawn.getZ() + 0.5f);
-            FabricDimensions.teleport(player, destination, new TeleportTarget(spawn3d, Vec3d.ZERO, 0, 0));
-        }
-
-        player.stopRiding();
-        player.fallDistance = 0;
-        player.teleport(spawn.getX() + 0.5f, spawn.getY() + 0.5f, spawn.getZ() + 0.5f);
-        player.getWorld().playSound(null, spawn.getX() + 0.5F, spawn.getY() + 0.5F, spawn.getZ() + 0.5F, SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, SoundCategory.PLAYERS, 1f, 1f);
+        Utilities.teleportPlayerTo(playerEntity, spawn.get(), spawnDimension);
+        playerEntity.getWorld().playSound(null, spawn.get().getX(), spawn.get().getY(), spawn.get().getZ(), SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, SoundCategory.PLAYERS, 1f, 1f);
     }
 
     public static void registerEffect() {

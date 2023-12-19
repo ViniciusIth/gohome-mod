@@ -3,7 +3,7 @@
   "id": "gohome",
   "version": "${version}",
   "name": "Go Home",
-  "description": "",
+  "description": "Adds configurable items to help on the way back.",
   "authors": [
     "viniciusith"
   ],
