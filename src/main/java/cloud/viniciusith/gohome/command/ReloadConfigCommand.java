@@ -7,6 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.Text;
 
 public class ReloadConfigCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess commandRegistryAccess, CommandManager.RegistrationEnvironment registrationEnvironment) {
@@ -14,6 +15,7 @@ public class ReloadConfigCommand {
     }
 
     private static int run(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        ctx.getSource().sendMessage(Text.of("Reloading Go Home configs"));
         ModConfig.reloadConfigs();
         return 1;
     }
