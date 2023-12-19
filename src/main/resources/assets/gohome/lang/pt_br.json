@@ -2,5 +2,6 @@
   "item.minecraft.potion.effect.recall_potion": "Poção do Retorno",
   "item.minecraft.lingering_potion.effect.recall_potion": "Poção Prolongada de Retorno",
   "item.minecraft.splash_potion.effect.recall_potion": "Poção Arremessável de Retorno",
-  "effect.gohome.recall": "Retorno"
+  "effect.gohome.recall": "Retorno",
+  "teleport.gohome.interdimension.error": "Algo poderoso te prende a este lugar."
 }
