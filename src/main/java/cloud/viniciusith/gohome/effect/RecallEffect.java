@@ -7,6 +7,7 @@ import net.minecraft.entity.effect.InstantStatusEffect;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -45,9 +46,14 @@ public class RecallEffect extends InstantStatusEffect {
 
         if (spawn.isEmpty()) {
             Vec3d worldSpawn = Utilities.getWorldSpawnPos(playerEntity);
-            Utilities.teleportPlayerTo(playerEntity, worldSpawn, ServerWorld.OVERWORLD);
+            boolean teleportResult = Utilities.teleportPlayerTo(playerEntity, worldSpawn, ServerWorld.OVERWORLD);
+            if (!teleportResult) {
+                playerEntity.networkHandler.sendPacket(new OverlayMessageS2CPacket(Text.translatable("teleport.gohome.interdimension.error")));
+                return;
+            }
+
             playerEntity.getWorld().playSound(null, worldSpawn.getX(), worldSpawn.getY(), worldSpawn.getZ(), SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, SoundCategory.PLAYERS, 1f, 1f);
-            playerEntity.sendMessage(Text.translatable("block.minecraft.spawn.not_valid"));
+            playerEntity.networkHandler.sendPacket(new OverlayMessageS2CPacket(Text.translatable("block.minecraft.spawn.not_valid")));
             return;
         }
 
