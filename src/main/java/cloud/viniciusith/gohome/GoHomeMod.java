@@ -3,8 +3,8 @@ package cloud.viniciusith.gohome;
 import cloud.viniciusith.gohome.command.ReloadConfigCommand;
 import cloud.viniciusith.gohome.config.ModConfig;
 import cloud.viniciusith.gohome.effect.RecallEffect;
+import cloud.viniciusith.gohome.item.MagicMirror;
 import cloud.viniciusith.gohome.potion.RecallPotion;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
@@ -17,6 +17,8 @@ public class GoHomeMod implements ModInitializer {
     @Override
     public void onInitialize() {
         ModConfig.registerConfigs();
+
+        MagicMirror.registerMagicMirror();
 
         RecallEffect.registerEffect();
         RecallPotion.registerRecallPotion();
