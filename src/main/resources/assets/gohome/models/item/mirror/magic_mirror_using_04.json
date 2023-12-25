@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "gohome:item/mirror/magic_mirror_04"
+  }
+}

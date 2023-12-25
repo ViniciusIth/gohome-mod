@@ -2,5 +2,37 @@
   "parent": "item/handheld",
   "textures": {
     "layer0": "gohome:item/magic_mirror"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "recalling": 0.01
+      },
+      "model": "gohome:item/mirror/magic_mirror_using_02"
+    },
+    {
+      "predicate": {
+        "recalling": 0.2
+      },
+      "model": "gohome:item/mirror/magic_mirror_using_03"
+    },
+    {
+      "predicate": {
+        "recalling": 0.4
+      },
+      "model": "gohome:item/mirror/magic_mirror_using_04"
+    },
+    {
+      "predicate": {
+        "recalling": 0.6
+      },
+      "model": "gohome:item/mirror/magic_mirror_using_05"
+    },
+    {
+      "predicate": {
+        "recalling": 0.8
+      },
+      "model": "gohome:item/mirror/magic_mirror_using_06"
+    }
+  ]
 }
