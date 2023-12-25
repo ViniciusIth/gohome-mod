@@ -16,6 +16,9 @@
   "entrypoints": {
     "main": [
       "cloud.viniciusith.gohome.GoHomeMod"
+    ],
+    "client": [
+      "cloud.viniciusith.gohome.GoHomeModClient"
     ]
   },
   "depends": {

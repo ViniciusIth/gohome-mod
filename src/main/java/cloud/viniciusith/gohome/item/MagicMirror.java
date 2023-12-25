@@ -120,4 +120,16 @@ public class MagicMirror extends Item {
             content.add(MAGIC_MIRROR);
         });
     }
+
+
+    public static void registerMagicMirrorClient() {
+        ModelPredicateProviderRegistry.register(MAGIC_MIRROR, new Identifier("recalling"), (ItemStack itemStack, ClientWorld clientWorld, LivingEntity livingEntity, int seed) -> {
+            if (livingEntity == null || livingEntity.getActiveItem() != itemStack) {
+                return 0.0F;
+            }
+
+            GoHomeMod.LOGGER.info(String.valueOf((itemStack.getMaxUseTime() - livingEntity.getItemUseTimeLeft()) / 20.0F));
+            return (itemStack.getMaxUseTime() - livingEntity.getItemUseTimeLeft()) / 20.0F;
+        });
+    }
 }
