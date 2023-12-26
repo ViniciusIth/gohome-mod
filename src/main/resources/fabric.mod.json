@@ -1,14 +1,15 @@
 {
   "schemaVersion": 1,
   "id": "gohome",
-  "version": "${version}",
+  "version": "1.2.0",
   "name": "Go Home",
   "description": "Adds configurable items to help on the way back.",
   "authors": [
     "viniciusith"
   ],
   "contact": {
-    "repo": "https://github.com/viniciusith/gohome_mod"
+    "sources": "https://github.com/viniciusith/gohome_mod",
+    "homepage": "https://modrinth.com/mod/go-home"
   },
   "license": "GPL-3.0",
   "icon": "assets/gohome/icon.png",
