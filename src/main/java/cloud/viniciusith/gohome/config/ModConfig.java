@@ -7,9 +7,20 @@ public class ModConfig {
     public static SimpleConfig CONFIG;
     private static ModConfigProvider configs;
 
-    public static boolean TRANS_DIM;
 
-    public static boolean RECALL_POTION;
+    //region General Config
+    public static boolean TRANS_DIM;
+    //endregion
+
+    //region Recall Potion Config
+    public static boolean ENABLE_RECALL_POTION;
+    //endregion
+
+    //region Magic Mirror Configs
+    public static boolean ENABLE_MIRROR;
+    public static int MIRROR_RELOADING_TIME;
+    public static int MIRROR_USE_TIME;
+    //endregion
 
     public static void registerConfigs() {
         configs = new ModConfigProvider();
@@ -25,17 +36,29 @@ public class ModConfig {
     }
 
     private static void createConfigs() {
-        configs.addKeyValuePair(new Pair<>("teleport.transdim", true), "Allow trans-dimensional teleport");
+        configs.addKeyValuePair(new Pair<>("general.dimensional_teleport", true), "Allow inter-dimensional teleportation");
 
-        // Items
+        // Recall Potion
         configs.addKeyValuePair(new Pair<>("item.recall_potion", true), "Enables recall potion");
+
+        // Magic Mirror
+        configs.addKeyValuePair(new Pair<>("item.magic_mirror", true), "Enables magic mirror potion");
+        configs.addKeyValuePair(new Pair<>("item.magic_mirror.use_time", 20), "Set mirror use time in ticks (1s = 20 ticks)");
+        configs.addKeyValuePair(new Pair<>("item.magic_mirror.reload_time", 120), "Set reloading time in ticks (1s = 20 ticks)");
     }
 
     private static void assignConfigs() {
         TRANS_DIM = CONFIG.getOrDefault("teleport.transdim", true);
-        RECALL_POTION = CONFIG.getOrDefault("item.recall_potion", true);
 
-        GoHomeMod.LOGGER.info("All " + configs.getConfigsList().size() + " have been set properly");
+        // Recall Potion
+        ENABLE_RECALL_POTION = CONFIG.getOrDefault("item.recall_potion", true);
+
+        // Magic Mirror
+        ENABLE_MIRROR = CONFIG.getOrDefault("item.magic_mirror", true);
+        MIRROR_USE_TIME = CONFIG.getOrDefault("item.magic_mirror.use_time", 20);
+        MIRROR_RELOADING_TIME = CONFIG.getOrDefault("item.magic_mirror.reload_time", 120);
+
+        GoHomeMod.LOGGER.info("All " + configs.getConfigsList().size() + "settings were loaded");
     }
 
 }
