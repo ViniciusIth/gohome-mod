@@ -18,10 +18,12 @@ public class GoHomeMod implements ModInitializer {
     public void onInitialize() {
         ModConfig.registerConfigs();
 
-        MagicMirror.registerMagicMirror();
+        if (ModConfig.ENABLE_RECALL_POTION) {
+            RecallEffect.registerEffect();
+            RecallPotion.registerRecallPotion();
+        }
 
-        RecallEffect.registerEffect();
-        RecallPotion.registerRecallPotion();
+        if (ModConfig.ENABLE_MIRROR) MagicMirror.registerMagicMirror();
 
         CommandRegistrationCallback.EVENT.register(ReloadConfigCommand::register);
     }
