@@ -79,10 +79,6 @@ public class Utilities {
     public static boolean teleportPlayerTo(ServerPlayerEntity playerEntity, Vec3d targetPos, RegistryKey<World> destination) {
         ServerWorld destinationDim = playerEntity.getServer().getWorld(destination);
 
-
-        GoHomeMod.LOGGER.info(destination.toString());
-        GoHomeMod.LOGGER.info(playerEntity.getServerWorld().getRegistryKey().toString());
-
         if (!destination.equals(playerEntity.getServerWorld().getRegistryKey())) {
             if (!ModConfig.TRANS_DIM) {
                 return false;
