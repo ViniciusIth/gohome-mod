@@ -2,6 +2,7 @@ package cloud.viniciusith.gohome.item;
 
 import cloud.viniciusith.gohome.GoHomeMod;
 import cloud.viniciusith.gohome.Utilities;
+import cloud.viniciusith.gohome.config.ModConfig;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
@@ -41,7 +42,7 @@ public class MagicMirror extends Item {
 
     @Override
     public int getMaxUseTime(ItemStack stack) {
-        return 20;
+        return ModConfig.MIRROR_USE_TIME;
     }
 
     @Override
@@ -63,7 +64,7 @@ public class MagicMirror extends Item {
         ServerPlayerEntity serverPlayer = (ServerPlayerEntity) user;
 
         teleportToSpawn(serverPlayer);
-        serverPlayer.getItemCooldownManager().set(this, 60);
+        serverPlayer.getItemCooldownManager().set(this, ModConfig.MIRROR_RELOADING_TIME);
 
         return stack;
     }
@@ -84,14 +85,15 @@ public class MagicMirror extends Item {
                 return;
             }
 
-            playerEntity.getWorld().playSound(null,
-                                              worldSpawn.getX(),
-                                              worldSpawn.getY(),
-                                              worldSpawn.getZ(),
-                                              SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT,
-                                              SoundCategory.PLAYERS,
-                                              1f,
-                                              1f
+            playerEntity.getWorld().playSound(
+                    null,
+                    worldSpawn.getX(),
+                    worldSpawn.getY(),
+                    worldSpawn.getZ(),
+                    SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT,
+                    SoundCategory.PLAYERS,
+                    1f,
+                    1f
             );
             playerEntity.networkHandler.sendPacket(new OverlayMessageS2CPacket(Text.translatable(
                     "block.minecraft.spawn.not_valid")));
@@ -99,14 +101,15 @@ public class MagicMirror extends Item {
         }
 
         Utilities.teleportPlayerTo(playerEntity, spawn.get(), spawnDimension);
-        playerEntity.getWorld().playSound(null,
-                                          spawn.get().getX(),
-                                          spawn.get().getY(),
-                                          spawn.get().getZ(),
-                                          SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT,
-                                          SoundCategory.PLAYERS,
-                                          1f,
-                                          1f
+        playerEntity.getWorld().playSound(
+                null,
+                spawn.get().getX(),
+                spawn.get().getY(),
+                spawn.get().getZ(),
+                SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT,
+                SoundCategory.PLAYERS,
+                1f,
+                1f
         );
     }
 
@@ -116,20 +119,21 @@ public class MagicMirror extends Item {
                 new Identifier(GoHomeMod.MOD_ID, "magic_mirror"),
                 MAGIC_MIRROR
         );
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> {
-            content.add(MAGIC_MIRROR);
-        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> content.add(MAGIC_MIRROR));
     }
 
 
     public static void registerMagicMirrorClient() {
-        ModelPredicateProviderRegistry.register(MAGIC_MIRROR, new Identifier("recalling"), (ItemStack itemStack, ClientWorld clientWorld, LivingEntity livingEntity, int seed) -> {
-            if (livingEntity == null || livingEntity.getActiveItem() != itemStack) {
-                return 0.0F;
-            }
+        ModelPredicateProviderRegistry.register(
+                MAGIC_MIRROR,
+                new Identifier("recalling"),
+                (ItemStack itemStack, ClientWorld clientWorld, LivingEntity livingEntity, int seed) -> {
+                    if (livingEntity == null || livingEntity.getActiveItem() != itemStack) {
+                        return 0.0F;
+                    }
 
-            GoHomeMod.LOGGER.info(String.valueOf((itemStack.getMaxUseTime() - livingEntity.getItemUseTimeLeft()) / 20.0F));
-            return (itemStack.getMaxUseTime() - livingEntity.getItemUseTimeLeft()) / 20.0F;
-        });
+                    return (float) (itemStack.getMaxUseTime() - livingEntity.getItemUseTimeLeft()) / ModConfig.MIRROR_USE_TIME;
+                }
+        );
     }
 }
