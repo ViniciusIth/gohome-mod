@@ -171,7 +171,6 @@ public class SimpleConfig {
      * @return  value corresponding to the given key
      * @see     SimpleConfig#getOrDefault
      */
-    @Deprecated
     private String get( String key ) {
         return config.get( key );
     }
@@ -195,7 +194,11 @@ public class SimpleConfig {
      */
     public int getOrDefault( String key, int def ) {
         try {
-            return Integer.parseInt( get(key) );
+            var val = Integer.parseInt( get(key) );
+            if ( val <= 0 ) {
+                return 1;
+            }
+            return val;
         } catch (Exception e) {
             return def;
         }
