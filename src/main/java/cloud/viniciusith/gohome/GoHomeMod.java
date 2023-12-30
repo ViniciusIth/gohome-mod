@@ -5,6 +5,7 @@ import cloud.viniciusith.gohome.config.ModConfig;
 import cloud.viniciusith.gohome.effect.RecallEffect;
 import cloud.viniciusith.gohome.item.MagicMirror;
 import cloud.viniciusith.gohome.potion.RecallPotion;
+import cloud.viniciusith.gohome.registry.LootTables;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
@@ -26,5 +27,7 @@ public class GoHomeMod implements ModInitializer {
         if (ModConfig.ENABLE_MIRROR) MagicMirror.registerMagicMirror();
 
         CommandRegistrationCallback.EVENT.register(ReloadConfigCommand::register);
+
+        LootTables.modifyLootTables();
     }
 }
