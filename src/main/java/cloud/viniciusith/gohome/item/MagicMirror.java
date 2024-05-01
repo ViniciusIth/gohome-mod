@@ -3,7 +3,6 @@ package cloud.viniciusith.gohome.item;
 import cloud.viniciusith.gohome.GoHomeMod;
 import cloud.viniciusith.gohome.Utilities;
 import cloud.viniciusith.gohome.config.ModConfig;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.world.ClientWorld;
@@ -34,7 +33,7 @@ import net.minecraft.world.World;
 import java.util.Optional;
 
 public class MagicMirror extends Item {
-    public static Item MAGIC_MIRROR = new MagicMirror(new FabricItemSettings().maxCount(1));
+    public static Item MAGIC_MIRROR = new MagicMirror(new Item.Settings().maxCount(1).rarity(Rarity.RARE));
 
     public MagicMirror(Settings settings) {
         super(settings);
@@ -53,11 +52,6 @@ public class MagicMirror extends Item {
     @Override
     public UseAction getUseAction(ItemStack stack) {
         return UseAction.BRUSH;
-    }
-
-    @Override
-    public Rarity getRarity(ItemStack stack) {
-        return Rarity.RARE;
     }
 
     @Override

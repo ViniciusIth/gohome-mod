@@ -11,6 +11,7 @@ import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public class RecallEffect extends InstantStatusEffect {
-    public static StatusEffect RECALL;
+    public static RegistryEntry<StatusEffect> RECALL;
 
     public RecallEffect() {
         super(StatusEffectCategory.BENEFICIAL, 0x15A5C1);
@@ -69,6 +70,6 @@ public class RecallEffect extends InstantStatusEffect {
     }
 
     public static void registerEffect() {
-        RECALL = Registry.register(Registries.STATUS_EFFECT, new Identifier("gohome", "recall"), new RecallEffect());
+        RECALL = Registry.registerReference(Registries.STATUS_EFFECT, new Identifier("gohome", "recall"), new RecallEffect());
     }
 }
