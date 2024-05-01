@@ -37,6 +37,13 @@ public class RecallEffect extends InstantStatusEffect {
         }
     }
 
+    @Override
+    public void onApplied(LivingEntity entity, int amplifier) {
+        if (entity instanceof PlayerEntity) {
+            teleportToSpawn((ServerPlayerEntity) entity);
+        }
+    }
+
     void teleportToSpawn(ServerPlayerEntity playerEntity) {
         Optional<Vec3d> spawn = Utilities.getPlayerSpawn(playerEntity);
         RegistryKey<World> spawnDimension = playerEntity.getSpawnPointDimension();
