@@ -13,6 +13,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.entry.ItemEntry;
+import net.minecraft.loot.entry.LootPoolEntry;
+import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -135,5 +140,18 @@ public class MagicMirror extends Item {
                     return (float) (itemStack.getMaxUseTime() - livingEntity.getItemUseTimeLeft()) / ModConfig.MIRROR_USE_TIME;
                 }
         );
+    }
+
+    public static void addLootTable(LootTable.Builder tableBuilder, float minSpawn, float maxSpawn) {
+        if (!ModConfig.ENABLE_MIRROR || !ModConfig.ENABLE_NATURAL_MIRROR) {
+            return;
+        }
+
+        LootPoolEntry magicMirrorPool = ItemEntry.builder(MAGIC_MIRROR).build();
+        LootPool.Builder builder = LootPool.builder()
+                .rolls(UniformLootNumberProvider.create(minSpawn, maxSpawn))
+                .with(magicMirrorPool);
+
+        tableBuilder.pool(builder);
     }
 }
