@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "io.github.viniciusith.gohome.Gohome"
+    ],
+    "client": [
+      "io.github.viniciusith.gohome.GohomeClient"
     ]
   },
   "mixins": [

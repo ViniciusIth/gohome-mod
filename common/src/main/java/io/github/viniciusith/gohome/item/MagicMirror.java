@@ -1,6 +1,8 @@
 package io.github.viniciusith.gohome.item;
 
 import io.github.viniciusith.gohome.Utilities;
+import io.github.viniciusith.gohome.config.Config;
+import io.github.viniciusith.gohome.registration.ModRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -9,33 +11,50 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 
 public class MagicMirror extends Item {
-    public static Properties MAGIC_MIRROR_PROPERTIES = new Properties().stacksTo(1).rarity(Rarity.RARE);
+    public static Properties PROPERTIES = new Properties().stacksTo(1).rarity(Rarity.RARE);
 
     public MagicMirror(Properties properties) {
         super(properties);
     }
 
+    public static float getMagicMirrorUsageDisplay(ItemStack stack, LivingEntity entity) {
+        if (entity == null) {
+            return 0f;
+        }
+        float maxUseTime = stack.getUseDuration(entity);
+        float elapsed = entity.getTicksUsingItem();
+
+        return elapsed / maxUseTime;
+    }
+
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         return ItemUtils.startUsingInstantly(level, player, usedHand);
     }
 
     @Override
-    public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return 20;
+    public int getUseDuration(@NotNull ItemStack stack, @NotNull LivingEntity entity) {
+        return Config.MIRROR_USE_TIME;
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
+    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
         return UseAnim.BRUSH;
     }
 
     @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
+    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, Level level, @NotNull LivingEntity livingEntity) {
         if (level.isClientSide()) {
             return stack;
         }
@@ -50,89 +69,22 @@ public class MagicMirror extends Item {
             return stack;
         }
 
-        serverPlayer.getCooldowns().addCooldown(this, 20);
+        serverPlayer.getCooldowns().addCooldown(this, Config.MIRROR_RELOADING_TIME);
 
         return stack;
     }
 
-//    void teleportToSpawn(ServerPlayerEntity playerEntity) {
-//        Optional<Vec3d> spawn = Utilities.getPlayerSpawn(playerEntity);
-//        RegistryKey<World> spawnDimension = playerEntity.getSpawnPointDimension();
-//
-//        playerEntity.stopRiding();
-//        playerEntity.fallDistance = 0;
-//
-//        if (spawn.isEmpty()) {
-//            Vec3d worldSpawn = Utilities.getWorldSpawnPos(playerEntity);
-//            boolean teleportResult = Utilities.teleportPlayerTo(playerEntity, worldSpawn, ServerWorld.OVERWORLD);
-//            if (!teleportResult) {
-//                playerEntity.networkHandler.sendPacket(new OverlayMessageS2CPacket(Text.translatable(
-//                        "teleport.gohome.interdimension.error")));
-//                return;
-//            }
-//
-//            playerEntity.getWorld().playSound(
-//                    null,
-//                    worldSpawn.getX(),
-//                    worldSpawn.getY(),
-//                    worldSpawn.getZ(),
-//                    SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT,
-//                    SoundCategory.PLAYERS,
-//                    1f,
-//                    1f
-//            );
-//            playerEntity.networkHandler.sendPacket(new OverlayMessageS2CPacket(Text.translatable(
-//                    "block.minecraft.spawn.not_valid")));
-//            return;
-//        }
-//
-//        Utilities.teleportPlayerTo(playerEntity, spawn.get(), spawnDimension);
-//        playerEntity.getWorld().playSound(
-//                null,
-//                spawn.get().getX(),
-//                spawn.get().getY(),
-//                spawn.get().getZ(),
-//                SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT,
-//                SoundCategory.PLAYERS,
-//                1f,
-//                1f
-//        );
-//    }
-//
-//    public static void registerMagicMirror() {
-//        Registry.register(
-//                Registries.ITEM,
-//                new Identifier(GoHomeMod.MOD_ID, "magic_mirror"),
-//                MAGIC_MIRROR
-//        );
-//        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> content.add(MAGIC_MIRROR));
-//    }
-//
-//
-//    public static void registerMagicMirrorClient() {
-//        ModelPredicateProviderRegistry.register(
-//                MAGIC_MIRROR,
-//                new Identifier("recalling"),
-//                (ItemStack itemStack, ClientWorld clientWorld, LivingEntity livingEntity, int seed) -> {
-//                    if (livingEntity == null || livingEntity.getActiveItem() != itemStack) {
-//                        return 0.0F;
-//                    }
-//
-//                    return (float) (itemStack.getMaxUseTime() - livingEntity.getItemUseTimeLeft()) / ModConfig.MIRROR_USE_TIME;
-//                }
-//        );
-//    }
-//
-//    public static void addLootTable(LootTable.Builder tableBuilder, float minSpawn, float maxSpawn) {
-//        if (!ModConfig.ENABLE_MIRROR || !ModConfig.ENABLE_NATURAL_MIRROR) {
-//            return;
-//        }
-//
-//        LootPoolEntry magicMirrorPool = ItemEntry.builder(MAGIC_MIRROR).build();
-//        LootPool.Builder builder = LootPool.builder()
-//                .rolls(UniformLootNumberProvider.create(minSpawn, maxSpawn))
-//                .with(magicMirrorPool);
-//
-//        tableBuilder.pool(builder);
-//    }
+    public static void addToLootTable(LootTable.Builder tableBuilder, float minRolls, float maxRolls, float chance, int minCount, int maxCount) {
+        if (!Config.ENABLE_MIRROR || !Config.ENABLE_NATURAL_MIRROR) {
+            return;
+        }
+
+        LootPool.Builder builder = LootPool.lootPool()
+                .setRolls(UniformGenerator.between(minRolls, maxRolls))
+                .when(LootItemRandomChanceCondition.randomChance(chance))
+                .add(LootItem.lootTableItem(ModRegistry.MAGIC_MIRROR.get()))
+                .apply(SetItemCountFunction.setCount(UniformGenerator.between(minCount, maxCount)));
+
+        tableBuilder.withPool(builder).build();
+    }
 }

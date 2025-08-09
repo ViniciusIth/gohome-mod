@@ -1,5 +1,6 @@
 package io.github.viniciusith.gohome;
 
+import io.github.viniciusith.gohome.config.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -59,9 +60,9 @@ public class Utilities {
         ServerLevel targetDimension = playerEntity.getServer().getLevel(destination);
 
         if (!destination.equals(playerEntity.serverLevel().dimension())) {
-//            if (!ModConfig.TRANS_DIM) {
-//                return false;
-//            }
+            if (!Config.TRANS_DIM) {
+                return false;
+            }
         }
 
         playerEntity.teleportTo(targetDimension, targetPos.x(), targetPos.y(), targetPos.z(), playerEntity.getYRot(), playerEntity.getXRot());

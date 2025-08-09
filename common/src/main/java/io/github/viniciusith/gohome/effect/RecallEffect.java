@@ -1,6 +1,8 @@
 package io.github.viniciusith.gohome.effect;
 
 import io.github.viniciusith.gohome.Utilities;
+import io.github.viniciusith.gohome.config.Config;
+import io.github.viniciusith.gohome.registration.ModRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
@@ -12,6 +14,14 @@ import net.minecraft.world.effect.InstantenousMobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.functions.SetPotionFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +31,21 @@ import java.util.Optional;
 public class RecallEffect extends InstantenousMobEffect {
     public RecallEffect(MobEffectCategory category, int colour) {
         super(category, colour);
+    }
+
+    public static void addToLootTable(LootTable.Builder tableBuilder, float minRolls, float maxRolls, float chance, int minCount, int maxCount) {
+        if (!Config.ENABLE_RECALL_POTION || !Config.ENABLE_NATURAL_RECALL_POTION) {
+            return;
+        }
+
+        LootPool.Builder builder = LootPool.lootPool()
+                .setRolls(UniformGenerator.between(minRolls, maxRolls))
+                .when(LootItemRandomChanceCondition.randomChance(chance))
+                .add(LootItem.lootTableItem(Items.POTION))
+                .apply(SetPotionFunction.setPotion(ModRegistry.RECALL_POTION.asHolder()))
+                .apply(SetItemCountFunction.setCount(UniformGenerator.between(minCount, maxCount)));
+
+        tableBuilder.withPool(builder).build();
     }
 
     @Override
@@ -48,7 +73,7 @@ public class RecallEffect extends InstantenousMobEffect {
             boolean ok = Utilities.teleportPlayerTo(player, Vec3.atLowerCornerOf(fallback), ServerLevel.OVERWORLD);
             if (!ok) {
                 player.connection.send(new ClientboundSystemChatPacket(
-                        Component.translatable("teleport.gohome.interdimension.error"), true
+                        Component.translatable("teleport.gohome.teleport.error"), true
                 ));
             }
             ServerLevel world = player.serverLevel();

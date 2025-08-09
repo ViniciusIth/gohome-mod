@@ -8,7 +8,9 @@ import io.github.viniciusith.gohome.platform.registry.RegistryObject;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.alchemy.Potion;
 
 
 public class ModRegistry {
@@ -16,7 +18,10 @@ public class ModRegistry {
     public static final RegistryObject<MobEffect> RECALL_EFFECT = EFFECTS.register("recall", () -> new RecallEffect(MobEffectCategory.BENEFICIAL, 0x15A5C1));
 
     public static final RegistrationProvider<Item> ITEMS = RegistrationProvider.get(BuiltInRegistries.ITEM, Constants.MOD_ID);
-    public static final RegistryObject<Item> MAGIC_MIRROR = ITEMS.register("magic_mirror", () -> new MagicMirror(MagicMirror.MAGIC_MIRROR_PROPERTIES));
+    public static final RegistryObject<Item> MAGIC_MIRROR = ITEMS.register("magic_mirror", () -> new MagicMirror(MagicMirror.PROPERTIES));
+
+    public static final RegistrationProvider<Potion> POTIONS = RegistrationProvider.get(BuiltInRegistries.POTION, Constants.MOD_ID);
+    public static final RegistryObject<Potion> RECALL_POTION = POTIONS.register("recall_potion", () -> new Potion(new MobEffectInstance(RECALL_EFFECT.asHolder())));
 
     public static void load(){}
 }
