@@ -1,0 +1,8 @@
+{
+  "item.minecraft.potion.effect.recall_potion": "Recall Potion",
+  "item.minecraft.lingering_potion.effect.recall_potion": "Lingering Recall Potion",
+  "item.minecraft.splash_potion.effect.recall_potion": "Splash Recall Potion",
+  "item.gohome.magic_mirror": "Magic Mirror",
+  "effect.gohome.recall": "Recall",
+  "teleport.gohome.teleport.error": "Something powerfull binds you to this place."
+}

@@ -17,54 +17,54 @@ import java.util.Optional;
 public class Utilities {
     public static Vec3 getWorldSpawnPos(ServerPlayer playerEntity) {
         ServerLevel overworld = playerEntity.getServer().getLevel(ServerLevel.OVERWORLD);
-        BlockPos worldSpawn = overworld.getSharedSpawnPos();
-        return new Vec3(worldSpawn.getX(), worldSpawn.getY(), worldSpawn.getZ());
+        return playerEntity.adjustSpawnLocation(overworld, overworld.getSharedSpawnPos()).getBottomCenter();
     }
 
-    public static Optional<Vec3> getPlayerSpawn(ServerPlayer serverPlayerEntity) {
-        ServerLevel targetWorld = serverPlayerEntity.server.getLevel(serverPlayerEntity.getRespawnDimension());
+    public static Optional<Vec3> getPlayerSpawnPos(ServerPlayer serverPlayerEntity) {
         BlockPos spawnpoint = serverPlayerEntity.getRespawnPosition();
-
         if (spawnpoint == null) {
             return Optional.empty();
         }
 
-        BlockState respawnBlockState = targetWorld.getBlockState(spawnpoint);
+        ServerLevel targetDimension = serverPlayerEntity.server.getLevel(serverPlayerEntity.getRespawnDimension());
+
+        BlockState respawnBlockState = targetDimension.getBlockState(spawnpoint);
         Block respawnBlock = respawnBlockState.getBlock();
 
-        if (respawnBlock instanceof RespawnAnchorBlock) {
-            return RespawnAnchorBlock.findStandUpPosition(EntityType.PLAYER, targetWorld, spawnpoint);
-        } else if (respawnBlock instanceof BedBlock) {
-            return BedBlock.findStandUpPosition(
-                    EntityType.PLAYER,
-                    targetWorld,
-                    spawnpoint,
-                    respawnBlockState.getValue(BedBlock.FACING),
-                    serverPlayerEntity.getRespawnAngle()
-            );
-        } else if (serverPlayerEntity.isRespawnForced()) {
-            boolean footBlockClear = respawnBlock.isPossibleToRespawnInThis(respawnBlockState);
-            boolean headBlockClear = targetWorld.getBlockState(spawnpoint.above()).getBlock().isPossibleToRespawnInThis(respawnBlockState);
-
-            if (footBlockClear && headBlockClear) {
-                return Optional.of(new Vec3((double) spawnpoint.getX() + 0.5D, (double) spawnpoint.getY() + 0.1D, (double) spawnpoint.getZ() + 0.5D));
+        switch (respawnBlock) {
+            case RespawnAnchorBlock s -> {
+                return RespawnAnchorBlock.findStandUpPosition(EntityType.PLAYER, targetDimension, spawnpoint);
             }
+            case BedBlock s -> {
+                return BedBlock.findStandUpPosition(
+                        EntityType.PLAYER,
+                        targetDimension,
+                        spawnpoint,
+                        respawnBlockState.getValue(BedBlock.FACING),
+                        serverPlayerEntity.getRespawnAngle()
+                );
+            }
+            default -> {
+            }
+        }
+
+        if (serverPlayerEntity.isRespawnForced()) {
+            return Optional.of(serverPlayerEntity.adjustSpawnLocation(targetDimension, targetDimension.getSharedSpawnPos()).getBottomCenter());
         }
 
         return Optional.empty();
     }
 
     public static boolean teleportPlayerTo(ServerPlayer playerEntity, Vec3 targetPos, ResourceKey<Level> destination) {
-        ServerLevel destinationDim = playerEntity.getServer().getLevel(destination);
+        ServerLevel targetDimension = playerEntity.getServer().getLevel(destination);
 
         if (!destination.equals(playerEntity.serverLevel().dimension())) {
 //            if (!ModConfig.TRANS_DIM) {
 //                return false;
 //            }
-//            FabricDimensions.teleport(playerEntity, destinationDim, new TeleportTarget(targetPos, Vec3d.ZERO, 0, 0));
         }
 
-        playerEntity.teleportTo(destinationDim, targetPos.x(), targetPos.y(), targetPos.z(), playerEntity.getYRot(), playerEntity.getXRot());
+        playerEntity.teleportTo(targetDimension, targetPos.x(), targetPos.y(), targetPos.z(), playerEntity.getYRot(), playerEntity.getXRot());
 
         return true;
     }

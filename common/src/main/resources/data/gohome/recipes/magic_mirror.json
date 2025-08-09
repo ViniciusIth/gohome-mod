@@ -1,0 +1,26 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " iE",
+        "IGi",
+        "iI "
+    ],
+    "key": {
+        "i": {
+            "item": "minecraft:iron_ingot"
+        },
+        "E": {
+            "item": "minecraft:ender_eye"
+        },
+        "I": {
+            "item": "minecraft:iron_nugget"
+        },
+        "G": {
+            "item": "minecraft:glass"
+        }
+    },
+    "result": {
+        "item": "gohome:magic_mirror",
+        "count": 1
+    }
+}
