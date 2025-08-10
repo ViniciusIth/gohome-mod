@@ -24,9 +24,14 @@ public class Config {
         assignConfigs();
     }
 
-    public static void reloadConfigs() {
+    public static boolean reloadConfigs() {
         CONFIG = SimpleConfig.of(Constants.MOD_ID + "config").provider(configs).request();
+        if (CONFIG.isBroken()) {
+            return false;
+        }
+
         assignConfigs();
+        return true;
     }
 
     private static void createConfigs() {

@@ -1,6 +1,8 @@
 package io.github.viniciusith.gohome;
 
+import io.github.viniciusith.gohome.commands.ReloadConfigCommand;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
@@ -20,6 +22,9 @@ public class Gohome implements ModInitializer {
         CommonClass.init();
 
         FabricBrewingRecipeRegistryBuilder.BUILD.register((l) -> l.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(Items.ENDER_PEARL), RECALL_POTION.asHolder()));
+        CommandRegistrationCallback.EVENT.register(
+                (dispatcher, ctx, environment) -> ReloadConfigCommand.register(dispatcher)
+        );
 //        LootTableEvents.MODIFY.register(((key, tableBuilder, source) -> {
 //            if (BuiltInLootTables.ABANDONED_MINESHAFT.equals(key)) {
 //                RecallEffect.addToLootTable(tableBuilder, 1, 1, .25f, 1, 2);

@@ -4,5 +4,8 @@
   "item.minecraft.splash_potion.effect.recall_potion": "Splash Recall Potion",
   "item.gohome.magic_mirror": "Magic Mirror",
   "effect.gohome.recall": "Recall",
-  "teleport.gohome.teleport.error": "Something powerfull binds you to this place."
+  "teleport.gohome.teleport.error": "Something powerfull binds you to this place.",
+  "command.gohome.reload": "Reloading settings...",
+  "command.gohome.reload.success": "Successfully reloaded settings.",
+  "command.gohome.reload.failure": "Something wen't wrong while reloading."
 }

@@ -4,5 +4,8 @@
   "item.minecraft.splash_potion.effect.recall_potion": "Poção Arremessável de Retorno",
   "item.gohome.magic_mirror": "Espelho Mágico",
   "effect.gohome.recall": "Retorno",
-  "teleport.gohome.teleport.error": "Algo poderoso te prende a este lugar."
+  "teleport.gohome.teleport.error": "Algo poderoso te prende a este lugar.",
+  "command.gohome.reload": "Atualizando configurações...",
+  "command.gohome.reload.success": "Configurações atualizadas com sucesso.",
+  "command.gohome.reload.failure": "Algo deu errado ao atualizar configurações."
 }

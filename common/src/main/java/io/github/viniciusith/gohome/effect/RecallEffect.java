@@ -3,10 +3,8 @@ package io.github.viniciusith.gohome.effect;
 import io.github.viniciusith.gohome.Utilities;
 import io.github.viniciusith.gohome.config.Config;
 import io.github.viniciusith.gohome.registration.ModRegistry;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -15,6 +13,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -25,8 +24,6 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 public class RecallEffect extends InstantenousMobEffect {
     public RecallEffect(MobEffectCategory category, int colour) {
@@ -60,37 +57,18 @@ public class RecallEffect extends InstantenousMobEffect {
         teleportToSpawn(player);
     }
 
-    private void teleportToSpawn(ServerPlayer player) {
-        BlockPos fallback = player.level().getSharedSpawnPos();
-        var dim = player.getRespawnDimension();
+    private void teleportToSpawn(ServerPlayer serverPlayer) {
+        Vec3 spawnPos = Utilities.getPlayerSpawnPos(serverPlayer).orElse(Utilities.getWorldSpawnPos(serverPlayer));
+        ResourceKey<Level> destinationDim = serverPlayer.getRespawnDimension();
 
-        // TODO: Maybe we could also bring the vehicle with the player if configured
-        player.removeVehicle();
-        player.fallDistance = 0f;
-
-        Optional<BlockPos> spawn = Optional.ofNullable(player.getRespawnPosition());
-        if (spawn.isEmpty()) {
-            boolean ok = Utilities.teleportPlayerTo(player, Vec3.atLowerCornerOf(fallback), ServerLevel.OVERWORLD);
-            if (!ok) {
-                player.connection.send(new ClientboundSystemChatPacket(
-                        Component.translatable("teleport.gohome.teleport.error"), true
-                ));
+        if (!destinationDim.equals(serverPlayer.serverLevel().dimension())) {
+            if (!Config.TRANS_DIM) {
+                serverPlayer.displayClientMessage(Component.translatable("teleport.gohome.teleport.error"), true);
+                return;
             }
-            ServerLevel world = player.serverLevel();
-            world.playSound(
-                    null,
-                    fallback,
-                    SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS,
-                    1.0f, 1.0f
-            );
-            player.connection.send(new ClientboundSystemChatPacket(
-                    Component.translatable("block.minecraft.spawn.not_valid"), true
-            ));
-
-            return;
         }
 
-        Utilities.teleportPlayerTo(player, Vec3.atLowerCornerOf(spawn.get()), dim);
-        player.serverLevel().playSound(null, spawn.get().getX(), spawn.get().getY(), spawn.get().getZ(), SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 1f, 1f);
+        Utilities.teleportPlayerTo(serverPlayer, spawnPos, destinationDim);
+        serverPlayer.serverLevel().playSound(null, spawnPos.x(), spawnPos.y(), spawnPos.z(), SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 1f, 1f);
     }
 }
